@@ -1,26 +1,23 @@
-import pygame
-import sys
+import streamlit as st
+import random
 
-# 1. Initialize the engine
-pygame.init()
-screen = pygame.display.set_mode((400, 300))
-pygame.display.set_caption("My Game Engine")
-clock = pygame.time.Clock()
+st.title("Mini Wordle")
 
-# 2. Main Game Loop
-while True:
-    # A. Event Handling (Input)
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
+# Initialize game
+if 'secret' not in st.session_state:
+    st.session_state.secret = "APPLE"
+    st.session_state.history = []
 
-    # B. Update (Logic)
-    # This is where you would check if the user guessed the word correctly
+# Input area
+guess = st.text_input("Enter a 5-letter word:", key="user_input")
 
-    # C. Draw (Rendering)
-    screen.fill((0, 0, 0))  # Clear the screen (Black)
-    # This is where you would draw the text/guesses
-    
-    pygame.display.flip()   # Update the display
-    clock.tick(60)          # Keep the game running at 60 FPS
+if st.button("Submit"):
+    if len(guess) != 5:
+        st.error("Must be 5 letters!")
+    else:
+        st.session_state.history.append(guess.upper())
+
+# Display history
+st.write("### Guesses:")
+for word in st.session_state.history:
+    st.write(word)
