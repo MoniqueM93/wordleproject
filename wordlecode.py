@@ -51,12 +51,25 @@ if st.button("Submit") and not st.session_state.game_over:
             st.session_state.game_over = True
 
 # Display history
+# --- IMPROVED VISUAL FEEDBACK ---
 st.write("### Your Guesses:")
-for word, feedback in st.session_state.history:
-    st.write(f"**{word}** |  {feedback}")
 
-if st.button("Restart"):
-    st.session_state.secret_word = random.choice(WORDS)
-    st.session_state.history = []
-    st.session_state.game_over = False
-    st.rerun()
+# Helper function to map feedback to colors
+def get_color(code):
+    if code == 'G': return "#538d4e" # Green
+    if code == 'Y': return "#b59f3b" # Yellow
+    return "#3a3a3c" # Gray (X)
+
+for word, feedback in st.session_state.history:
+    cols = st.columns(5) # Create 5 columns per guess
+    for i, col in enumerate(cols):
+        # We render a colored box with the letter inside
+        color = get_color(feedback[i])
+        col.markdown(
+            f"""
+            <div style="background-color: {color}; color: white; padding: 15px; 
+            text-align: center; border-radius: 5px; font-weight: bold; font-size: 20px;">
+            {word[i]}
+            </div>
+            """, unsafe_allow_html=True
+        )
