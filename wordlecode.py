@@ -1,46 +1,42 @@
-import random
+import pygame
+import sys
 
-# Core game data
-words = ['PIANO', 'HOUSE', 'BRAIN', 'LIGHT', 'TRACK']
-secretWord = random.choice(words)
-max_guesses = 6
+# 1. Initialization
+pygame.init()
+SCREEN_WIDTH, SCREEN_HEIGHT = 500, 600
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+pygame.display.set_caption("Wordle Game")
 
-print('Welcome to Wordle-style Guessing!')
+# Colors
+WHITE = (255, 255, 255)
+GRAY = (200, 200, 200)
+BLACK = (0, 0, 0)
 
-for attempt in range(1, max_guesses + 1):
-    guess = input(f'Attempt {attempt}/{max_guesses}: ').upper()
+# Game State
+grid_size = 5 # 5 letters
+attempts = 6
 
-    # Input Validation
-    if len(guess) != 5:
-        print('Please enter a 5-letter word.')
-        continue
-    
-    # Check for Win
-    if guess == secretWord:
-        print(f'Congratulations! You guessed it in {attempt} attempts!')
-        break
-        
-    # Feedback Generation
-    feedback = ""
-    # We use a list to track which letters in secretWord have been "used" 
-    # to handle duplicate letters correctly.
-    secret_list = list(secretWord)
-    guess_list = list(guess)
-    
-    # First pass: Check for Greens (Correct position)
-    result = ['[X]'] * 5
-    for i in range(5):
-        if guess_list[i] == secret_list[i]:
-            result[i] = '[G]'
-            secret_list[i] = None # Mark as used
+def draw_grid():
+    # Draw the empty Wordle grid
+    for row in range(attempts):
+        for col in range(grid_size):
+            rect = pygame.Rect(50 + col * 80, 50 + row * 80, 70, 70)
+            pygame.draw.rect(screen, GRAY, rect, 2) # Draw outline
+
+# 2. Main Game Loop
+running = True
+while running:
+    # 3. Event Handling
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
             
-    # Second pass: Check for Yellows (Correct letter, wrong position)
-    for i in range(5):
-        if result[i] == '[X]' and guess_list[i] in secret_list:
-            result[i] = '[Y]'
-            secret_list[secret_list.index(guess_list[i])] = None # Mark as used
-            
-    print('Result:', ''.join(result))
+    # 4. Drawing/Rendering
+    screen.fill(BLACK)
+    draw_grid()
+    
+    # Update the display
+    pygame.display.flip()
 
-else:
-    print(f'Game Over! The word was {secretWord}.')
+pygame.quit()
+sys.exit()
